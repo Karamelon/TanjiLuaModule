@@ -11,17 +11,21 @@ namespace TanjiLuaModule.Engine.Proxys
     class GuiProxy
     {
         GuiType type;
+
         [MoonSharpHidden]
         public GuiProxy(GuiType type)
         {
             this.type = type;
         }
 
-        public void TopMost()
+        public DynValue GetValue(DynValue name)
         {
-            type.TopMost(true);
+            return DynValue.NewString(type.GetValue(name.String));
         }
-
+        public DynValue IsCheked(DynValue name)
+        {
+            return DynValue.NewBoolean(type.IsChecked(name.String));
+        }
         public void TopMost(DynValue actived)
         {
             type.TopMost(actived.Boolean);

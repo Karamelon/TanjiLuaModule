@@ -18,7 +18,6 @@ namespace TanjiLuaModule.Engine
     {
 
         public Dictionary<String, ScriptProcess> process = new Dictionary<string, ScriptProcess>();
-        //public List<ScriptProcess> process = new List<ScriptProcess>();
 
         public MainForm MainForm { get; }
 
@@ -30,6 +29,12 @@ namespace TanjiLuaModule.Engine
 
         public void Load(string dir)
         {
+            if (process.ContainsKey(dir))
+            {
+                process.TryGetValue(dir,out ScriptProcess sp);
+                sp.Dispose();
+                process.Remove(dir);
+            }
             ScriptProcess scriptProcess = new ScriptProcess(MainForm, dir);
             scriptProcess.Load();
             process.Add(dir,scriptProcess);

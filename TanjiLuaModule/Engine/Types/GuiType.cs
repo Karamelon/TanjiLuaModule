@@ -53,7 +53,11 @@ namespace TanjiLuaModule.Engine.Types
                 Location = new Point(x, y)
             };
             button.Click += new EventHandler(delegate {
-                script.Call(script.Globals["button_"+id+"_click"]);
+                try
+                {
+                    script.Call(script.Globals["button_"+id+"_click"]);
+                }
+                catch (Exception) { }
             });
             Form.Controls.Add(button);
         }
@@ -62,30 +66,76 @@ namespace TanjiLuaModule.Engine.Types
         public void AddLabel(string id, string text, int x, int y)
         {
             Script script = scriptProcess.Script;
-            Label button = new Label
+            Label label = new Label
             {
                 Name = id,
                 Text = text,
                 Location = new Point(x, y)
             };
-            Form.Controls.Add(button);
+            Form.Controls.Add(label);
         }
 
         public void AddCheckBox(string id, string text, int x, int y)
         {
             Script script = scriptProcess.Script;
-            CheckBox button = new CheckBox
+            CheckBox checkbox = new CheckBox
             {
                 Name = id,
                 Text = text,
                 Location = new Point(x, y)
             };
-            button.Click += new EventHandler(delegate {
-                script.Call(script.Globals["checkbox_" + id + "_click"], button.Checked);
+            checkbox.Click += new EventHandler(delegate {
+                try
+                {
+                    script.Call(script.Globals["checkbox_" + id + "_click"], checkbox.Checked);
+                } catch (Exception) { }
             });
-            Form.Controls.Add(button);
+            Form.Controls.Add(checkbox);
 
         }
+
+        public void AddTextbox(string id, int x, int y)
+        {
+            Script script = scriptProcess.Script;
+            TextBox textbox = new TextBox()
+            {
+                Name = id,
+               // Text = text,
+                Location = new Point(x, y)
+            };
+            Form.Controls.Add(textbox);
+
+        }
+
+        public String GetValue(String name)
+        {
+            if (!Form.Controls.ContainsKey(name))
+            {
+                return null;
+            }
+            Control[] ctns = Form.Controls.Find(name, true);
+            var ctn = ctns.GetValue(0) as Control;
+            return ctn.Text;
+        }
+
+        public bool IsChecked(String ckbox)
+        {
+            if (!Form.Controls.ContainsKey(ckbox))
+            {
+                return false;
+            }
+            Control[] ctns = Form.Controls.Find(ckbox, true);
+            var ctn = ctns.GetValue(0) as Control;
+            if (ctn is CheckBox)
+            {
+                var ckb = ctn as CheckBox;
+                return ckb.Checked;
+
+            }
+            return false;
+        }
+
+
 
         public void Show()
         {

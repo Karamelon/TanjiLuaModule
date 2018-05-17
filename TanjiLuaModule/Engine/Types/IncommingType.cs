@@ -24,7 +24,6 @@ namespace TanjiLuaModule.Engine.Types
             int pos = 0;
             foreach (DynValue val in data)
             {
-                Loader.addLog(val.ToString());
                 if (val.Type == DataType.Number)
                 {
                     values[pos] = val.Number;

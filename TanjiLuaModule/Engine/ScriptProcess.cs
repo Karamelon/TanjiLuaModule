@@ -33,16 +33,23 @@ namespace TanjiLuaModule.Engine
          
         public void ServerMessageRecivedFire(int header, DataInterceptedEventArgs dt)
         {
-            RegistredHandlers.Add(last, dt);
-            Script.CallAsync(Script.Globals["ServerMessageHandler"], DynValue.NewNumber(header), DynValue.NewNumber(last));
-            last++;
+            try
+            {
+                RegistredHandlers.Add(last, dt);
+                Script.CallAsync(Script.Globals["ServerMessageHandler"], DynValue.NewNumber(header), DynValue.NewNumber(last));
+                last++;
+            } catch (Exception) { }
         }
 
         public void ClientMessageRecivedFire(int header, DataInterceptedEventArgs dt)
         {
-            RegistredHandlers.Add(last, dt);
-            Script.CallAsync(Script.Globals["ClientMessageHandler"], DynValue.NewNumber(header), DynValue.NewNumber(last));
-            last++;
+            try
+            {
+                RegistredHandlers.Add(last, dt);
+                Script.CallAsync(Script.Globals["ClientMessageHandler"], DynValue.NewNumber(header), DynValue.NewNumber(last));
+                last++;
+            }
+            catch (Exception) { }
         }
 
         public void Dispose()
