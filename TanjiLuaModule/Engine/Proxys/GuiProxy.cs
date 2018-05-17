@@ -22,6 +22,10 @@ namespace TanjiLuaModule.Engine.Proxys
         {
             return DynValue.NewString(type.GetValue(name.String));
         }
+        public void SetValue(DynValue name, DynValue value)
+        {
+            type.SetValue(name.String, value.String);
+        }
         public DynValue IsCheked(DynValue name)
         {
             return DynValue.NewBoolean(type.IsChecked(name.String));

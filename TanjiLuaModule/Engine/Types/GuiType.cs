@@ -118,6 +118,17 @@ namespace TanjiLuaModule.Engine.Types
             return ctn.Text;
         }
 
+        public void SetValue(String name, String value)
+        {
+            if (!Form.Controls.ContainsKey(name))
+            {
+                return;
+            }
+            Control[] ctns = Form.Controls.Find(name, true);
+            var ctn = ctns.GetValue(0) as Control;
+            ctn.Text = value;
+        }
+
         public bool IsChecked(String ckbox)
         {
             if (!Form.Controls.ContainsKey(ckbox))
