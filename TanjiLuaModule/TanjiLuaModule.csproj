@@ -97,14 +97,15 @@
   <ItemGroup>
     <Compile Include="Engine\Proxys\DataInterceptedProxy.cs" />
     <Compile Include="Engine\Types\DataInterceptedType.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Engine\Proxys\GuiProxy.cs" />
     <Compile Include="Engine\Proxys\OutgoingProxy.cs" />
     <Compile Include="Engine\ScriptManager.cs" />
     <Compile Include="Engine\ScriptProcess.cs" />
-    <Compile Include="Engine\Proxys\IncommingProxy.cs" />
+    <Compile Include="Engine\Proxys\IncomingProxy.cs" />
     <Compile Include="Engine\Types\GuiType.cs" />
-    <Compile Include="Engine\Types\IncommingType.cs" />
+    <Compile Include="Engine\Types\IncomingType.cs" />
     <Compile Include="Engine\Types\OutgoingType.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -135,12 +136,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Scripts\Test.lua">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Include="Scripts\AdmJoin.lua">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="TanjiLuaModule_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

@@ -13,11 +13,12 @@ namespace TanjiLuaModule.Engine.Types
 {
     class OutgoingType
     {
-        ScriptProcess scriptProcess;
-        MainForm Loader { get; }
-        public OutgoingType(MainForm loader, ScriptProcess script)
+        private ScriptProcess scriptProcess;
+        private MainForm mainForm;
+
+        public OutgoingType(MainForm mainForm, ScriptProcess script)
         {
-            Loader = loader;
+            this.mainForm = mainForm;
             this.scriptProcess = script;
         }
 
@@ -27,7 +28,6 @@ namespace TanjiLuaModule.Engine.Types
             int pos = 0;
             foreach (DynValue val in vlas)
             {
-                Loader.addLog(val.ToString());
                 if (val.Type == DataType.Number)
                 {
                     values[pos] = val.Number;
@@ -42,18 +42,31 @@ namespace TanjiLuaModule.Engine.Types
                 }
                 pos++;
             }
-            Loader.Connection.SendToServerAsync(header, values);
+            mainForm.Connection.SendToServerAsync(header, values);
         }
 
         public void Register(int packet)
         {
             Script lua = scriptProcess.Script;
             scriptProcess.RegistredPacketHandlers.Add(packet, RegisterType.OUT);
-            Loader.Triggers.OutAttach(ushort.Parse(packet+""), (dt)=>
+            mainForm.Triggers.OutAttach((ushort)packet, (dt)=>
             {
-                scriptProcess.ServerMessageRecivedFire(packet, dt);
+                ServerMessageRecivedFire(packet, dt);
             }
             );
+
+        }
+        public void ServerMessageRecivedFire(int header, DataInterceptedEventArgs dt)
+        {
+            try
+            {
+                scriptProcess.RegistredHandlers.Add(scriptProcess.Last, dt);
+                scriptProcess.Script.CallAsync(scriptProcess.Script.Globals["ServerMessageHandler"],
+                    DynValue.NewNumber(header),
+                    DynValue.NewNumber(scriptProcess.Last));
+                scriptProcess.Last++;
+            }
+            catch (Exception) { }
         }
     }
 }

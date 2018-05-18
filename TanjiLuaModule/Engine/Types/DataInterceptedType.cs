@@ -12,13 +12,13 @@ namespace TanjiLuaModule.Engine.Proxys
     class DataInterceptedType
     {
         ScriptProcess script;
-        MainForm Loader;
+        MainForm mainForm;
 
         [MoonSharpHidden]
-        public DataInterceptedType(MainForm loader, ScriptProcess script)
+        public DataInterceptedType(MainForm mainForm, ScriptProcess script)
         {
             this.script = script;
-            this.Loader = loader;
+            this.mainForm = mainForm;
         }
 
         public String STRING()
@@ -51,15 +51,12 @@ namespace TanjiLuaModule.Engine.Proxys
             {
                 switch (value.String.ToLower())
                 {
-                    case "intager":
                     case "int":
                         table.Add(DynValue.NewNumber(type.Packet.ReadInteger()));
                         break;
-                    case "string":
                     case "str":
                         table.Add(DynValue.NewString(type.Packet.ReadString()));
                         break;
-                    case "boolean":
                     case "bool" :
                         table.Add(DynValue.NewBoolean(type.Packet.ReadBoolean()));
                         break;

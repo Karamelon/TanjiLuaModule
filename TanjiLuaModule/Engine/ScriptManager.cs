@@ -35,14 +35,14 @@ namespace TanjiLuaModule.Engine
                 sp.Dispose();
                 process.Remove(dir);
             }
-            ScriptProcess scriptProcess = new ScriptProcess(MainForm, dir);
+            ScriptProcess scriptProcess = new ScriptProcess(MainForm, dir, this);
             scriptProcess.Load();
             process.Add(dir,scriptProcess);
         }
 
         public void Remove(ScriptProcess script)
         {
-            process.Remove(script.Dir);
+            process.Remove(script.ScriptFile);
             script.Dispose();
         }
 

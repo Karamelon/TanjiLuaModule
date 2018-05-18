@@ -18,38 +18,55 @@ namespace TanjiLuaModule.Engine
     class ScriptProcess
     {
         public Script Script;
-        MainForm mainLoader;
-        public String Dir;
-
-        long last = 1;
+        public String ScriptFile;
+        public long Last = 1;
         public Dictionary<long, DataInterceptedEventArgs> RegistredHandlers = new Dictionary<long, DataInterceptedEventArgs>();
         public Dictionary<int, RegisterType> RegistredPacketHandlers = new Dictionary<int, RegisterType>();
 
-        public ScriptProcess(MainForm loader, String dir)
-        {
-            Dir = dir;
-            this.mainLoader = loader;   
-        }
-         
-        public void ServerMessageRecivedFire(int header, DataInterceptedEventArgs dt)
-        {
-            try
-            {
-                RegistredHandlers.Add(last, dt);
-                Script.CallAsync(Script.Globals["ServerMessageHandler"], DynValue.NewNumber(header), DynValue.NewNumber(last));
-                last++;
-            } catch (Exception) { }
-        }
+        private MainForm mainForm;
+        public ScriptManager ScriptManager { get; }
 
-        public void ClientMessageRecivedFire(int header, DataInterceptedEventArgs dt)
+        public ScriptProcess(MainForm mainForm, String file, ScriptManager scriptManager)
+        {
+            ScriptFile = file;
+            this.mainForm = mainForm;   
+        }
+      
+        public void Load()
         {
             try
-            {
-                RegistredHandlers.Add(last, dt);
-                Script.CallAsync(Script.Globals["ClientMessageHandler"], DynValue.NewNumber(header), DynValue.NewNumber(last));
-                last++;
+            {                
+                Script = new Script();
+
+                UserData.RegisterProxyType<IncomingProxy, IncomingType>(r => new IncomingProxy(r));
+                UserData.RegisterProxyType<OutgoingProxy, OutgoingType>(r => new OutgoingProxy(r));
+                UserData.RegisterProxyType<DataInterceptedProxy, DataInterceptedType>(r => new DataInterceptedProxy(r));
+                UserData.RegisterProxyType<GuiProxy, GuiType>(r => new GuiProxy(r));
+
+                Script.Options.ScriptLoader = new EmbeddedResourcesScriptLoader();
+                Script.GlobalOptions.Platform = new StandardPlatformAccessor();
+                
+                Script.Globals["Client"] = new IncomingType(mainForm, this);
+                Script.Globals["Server"] = new OutgoingType(mainForm, this);
+                Script.Globals["Gui"] = new GuiType(mainForm, this);
+                Script.Globals["Intercept"] = new DataInterceptedType(mainForm, this);
+                //Util
+                Script.Globals["msgBox"] = (Action<String,String>)((v1,v2)=> MessageBox.Show(v2,v1));
+                Script.Globals["print"] = (Action<String>)((v1) => mainForm.AddLog(v1));
+                Script.DoString(File.ReadAllText(ScriptFile));           
+                mainForm.AddLog("SCRIPT -> " + Path.GetFileName(ScriptFile) + " LOADED");
             }
-            catch (Exception) { }
+            catch (ScriptRuntimeException sre)
+            {
+                mainForm.AddLog("LUA ERROR: " + sre.ToString());
+                ScriptManager.Remove(this);
+            }
+            catch (SyntaxErrorException sye)
+            {
+                mainForm.AddLog("LUA SYNTAX ERROR: " + sye.Message);
+                ScriptManager.Remove(this);
+            }
+
         }
 
         public void Dispose()
@@ -57,49 +74,14 @@ namespace TanjiLuaModule.Engine
             foreach (KeyValuePair<int, RegisterType> entry in RegistredPacketHandlers)
             {
                 if (entry.Value == RegisterType.OUT)
-                    mainLoader.Triggers.OutDetach(ushort.Parse(entry.Key.ToString()));
+                    mainForm.Triggers.OutDetach(ushort.Parse(entry.Key.ToString()));
                 else
-                    mainLoader.Triggers.InDetach(ushort.Parse(entry.Key.ToString()));
+                    mainForm.Triggers.InDetach(ushort.Parse(entry.Key.ToString()));
             }
             Script = null;
-            last = 1;
+            Last = 1;
             RegistredHandlers.Clear();
             RegistredPacketHandlers.Clear();
         }
-
-        public void Load()
-        {
-            try
-            {                
-                Script = new Script();
-                UserData.RegisterProxyType<IncommingProxy, IncommingType>(r => new IncommingProxy(r));
-                UserData.RegisterProxyType<OutgoingProxy, OutgoingType>(r => new OutgoingProxy(r));
-                UserData.RegisterProxyType<DataInterceptedProxy, DataInterceptedType>(r => new DataInterceptedProxy(r));
-                UserData.RegisterProxyType<GuiProxy, GuiType>(r => new GuiProxy(r));
-                Script.Options.ScriptLoader = new EmbeddedResourcesScriptLoader();
-                Script.GlobalOptions.Platform = new StandardPlatformAccessor();
-                Script.Globals["Client"] = new IncommingType(mainLoader, this);
-                Script.Globals["Server"] = new OutgoingType(mainLoader, this);
-                Script.Globals["Gui"] = new GuiType(mainLoader, this);
-                Script.Globals["Intercept"] = new DataInterceptedType(mainLoader, this);
-                //Util
-                Script.Globals["msgBox"] = (Action<String,String>)((v1,v2)=> MessageBox.Show(v2,v1));
-                Script.Globals["print"] = (Action<String>)((v1) => mainLoader.addLog(v1));
-                Script.DoString(File.ReadAllText(Dir));           
-                mainLoader.addLog("SCRIPT -> " + Path.GetFileName(Dir) + " LOADED");
-            }
-            catch (ScriptRuntimeException sre)
-            {
-                mainLoader.addLog("LUA ERROR: " + sre.ToString());
-                mainLoader.ScriptManager.Remove(this);
-            }
-            catch (SyntaxErrorException sye)
-            {
-                mainLoader.addLog("LUA SYNTAX ERROR: " + sye.Message);
-                mainLoader.ScriptManager.Remove(this);
-            }
-
-        }
-
     }
 }

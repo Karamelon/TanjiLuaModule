@@ -14,16 +14,16 @@ namespace TanjiLuaModule.Engine.Types
     {
         private Form Form;
         private ScriptProcess scriptProcess;
-        private MainForm Loader;
+        private MainForm mainForm;
 
-        public GuiType(MainForm main, ScriptProcess scriptp)
+        public GuiType(MainForm mainForm, ScriptProcess scriptp)
         {
-            Loader = main;
+            this.mainForm = mainForm;
             scriptProcess = scriptp;
             Form = new Form();
             Form.Disposed += new EventHandler(delegate
             {
-                Loader.ScriptManager.Remove(scriptProcess);
+                scriptProcess.ScriptManager.Remove(scriptProcess);
             });
             
         }
@@ -31,7 +31,7 @@ namespace TanjiLuaModule.Engine.Types
         public void Create(string title, int width, int height)
         {
             ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
-            Form.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            Form.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Form.Width = width;
             Form.Text = title;
             Form.Height = height;
@@ -100,11 +100,9 @@ namespace TanjiLuaModule.Engine.Types
             TextBox textbox = new TextBox()
             {
                 Name = id,
-               // Text = text,
                 Location = new Point(x, y)
             };
             Form.Controls.Add(textbox);
-
         }
 
         public String GetValue(String name)
@@ -145,8 +143,6 @@ namespace TanjiLuaModule.Engine.Types
             }
             return false;
         }
-
-
 
         public void Show()
         {

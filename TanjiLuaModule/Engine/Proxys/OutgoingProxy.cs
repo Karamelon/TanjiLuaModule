@@ -19,20 +19,16 @@ namespace TanjiLuaModule.Engine.Proxys
             this.type = type;
         }
 
-        public void send(DynValue header, List<DynValue>send)
+        public void Send(DynValue header, List<DynValue>send)
         {
-            type.Send(ushort.Parse(header.Number + ""), send);
+            type.Send((ushort)header.Number, send);
         }
 
-        public void register(DynValue value)
+        public void Register(DynValue value)
         {
             if (value.Type == DataType.Number)
             {
                 type.Register((int)value.Number);
-            }
-            else
-            {
-                throw new ScriptRuntimeException("(Outgoing:register) Only accepts STRING or INT.");
             }
         }
     }

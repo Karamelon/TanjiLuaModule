@@ -30,7 +30,6 @@ namespace TanjiLuaModule
             
         }
 
-        internal ScriptManager ScriptManager { get => scriptManager; set => scriptManager = value; }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -43,13 +42,12 @@ namespace TanjiLuaModule
             {
                 return;
             }
-            OpenFileDialog dialog = (OpenFileDialog)sender;           
-            ScriptManager.Load(dialog.FileName);
+            var dialog = sender as OpenFileDialog;           
+            scriptManager.Load(dialog.FileName);
         }
 
-        public void addLog(String console)
+        public void AddLog(String console)
         {
-            //listBox1.Items.Add(console);
             listBox1.Invoke((MethodInvoker)(() => listBox1.Items.Add(console)));
         }
 
