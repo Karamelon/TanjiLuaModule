@@ -6,7 +6,7 @@
 A Tanji module to give **LUA** support! Make scripts **fast, simple and in real time**.
 
 # Tutorial
-
+The key of this module is simplicity of create own scripts. **Lua** is very simple to learn and coding, to more information how to create scripts  in lua visit  [lua official manual](https://www.lua.org/manual/5.3/).
 ## GUI
 > **GUI Estruture** 
 > ```lua 
@@ -29,8 +29,17 @@ A Tanji module to give **LUA** support! Make scripts **fast, simple and in real 
 >function button_UniqueButtonName_click()
 >end
 > --Handle checkbox event
->function button_UniqueCheckboxName_click(cheked)
+>function checkbox_UniqueCheckboxName_click(cheked)
 >end
+> ```
+> **Getting GUI values**
+> ```lua
+> -- Returns a string value
+> Gui:getValue(GUIElementUniqueName)
+> -- Set Gui text
+> Gui:setValue(GUIElementUniqueName, Text)
+> -- Getting chebox value
+> Gui:isCheked(CheckboxUniqueName)
 > ```
 
 
@@ -38,38 +47,43 @@ A Tanji module to give **LUA** support! Make scripts **fast, simple and in real 
 > **Bind packets events** (out / in)
 > ```lua 
 > --Bind outgoing value 
-> Outgoing:register(packetNumber)
+> Server:register(packetNumber)
 > --Bind incoming value 
-> Incoming:register(packetNumber)
+> Client:register(packetNumber)
 > ```
 > 
 > **Send packets** (out / in)
 > ```lua 
 > -- Send outgoing value 
-> Outgoing:send(header, {"data", 1, 5, ...})
+> Server:send(header, {"data", 1, 5, ...})
 > --Send incoming value 
-> Incoming:send(header, {"data", 1, 5, ...})
+> Client:send(header, {"data", 1, 5, ...})
 > ```
 > **Intercept packets** (out / in)
 > Using **Incercept**
 > ```lua 
+> 
 > -- This function is called every time if server message received.
 > -- IMPORTANT: server message needs to be registered before.
+> 
 > function ServerMessageHandle(header, event)
+> 
 >    -- Intercept server message data.
 >    local result = Intercept:data(event, {
->                        Intercept:STRING(), -- Packet read String [0]
->                        Intercept:INT(), --Packet read Int [1]
->                        Intercept:SHORT(), -- Packet read short [2]
->                        Intercept:BOOL(), -- Packet read Boolean [3]
+>                        Intercept:STRING(), -- Packet read String [1]
+>                        Intercept:INT(), --Packet read Int [2]
+>                        Intercept:SHORT(), -- Packet read short [3]
+>                        Intercept:BOOL(), -- Packet read Boolean [4]
 >                        ...
 >                     }) 
 >                 
 >    -- Example of data received access
->    print (result[index]) -- Index depends directly a quantity of poped values
+>    print (result[1]) -- Index depends directly a quantity of poped values
 > end
+> 
 > -- This function is called every time if client message received.
 > -- IMPORTANT: server message needs to be registered before
+> 
 > function ClientMessageHandler(header, event)
 >    -- Intercept client message data.
 >    local result = Intercept:data(event, {
@@ -91,9 +105,28 @@ A Tanji module to give **LUA** support! Make scripts **fast, simple and in real 
 > msgBox("Title", "Content")
 > --Print in console
 > print("Data")
-> ``
+> ```
 
 ## Script Example
 > ```lua 
+> --Create a simple GUI
+> Gui:Create("Say user ID module", 200, 75)
+> -- Create a Checkbox
+> Gui:AddCheckBox("ckbox", "Say?" , 60, 8)
+> -- Show gui
+> Gui:Show()
 > 
-> ``
+> -- Bind Server Message
+> Server:register(2220)
+> 
+> -- On server message recived
+> function ServerMessageHandler(hader, event)
+>      -- Check header and verify if chackbox is checked
+>      if (header == 2220 and Gui:isCheked("ckbox")) then
+>            -- Intercept data, and  store value in local variable
+>            local data = Intercept:data(event, {Intercept:INT()})
+>            -- Send server message with data
+>            Server:send(395, {"ID: "..data[1], 0, 17})
+>      end            
+>end
+> ```

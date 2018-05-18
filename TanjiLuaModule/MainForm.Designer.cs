@@ -32,10 +32,10 @@
             this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,7 +64,15 @@
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(98, 17);
-            this.toolStripStatusLabel1.Text = "TanjiLua (v: 1.0.0)";
+            this.toolStripStatusLabel1.Text = "TanjiLua (v: 1.0.1)";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.IsLink = true;
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(43, 17);
+            this.toolStripStatusLabel2.Text = "Github";
+            this.toolStripStatusLabel2.Click += new System.EventHandler(this.toolStripStatusLabel2_Click);
             // 
             // openFileDialog1
             // 
@@ -90,14 +98,6 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Console:";
             // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.IsLink = true;
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(43, 17);
-            this.toolStripStatusLabel2.Text = "Github";
-            this.toolStripStatusLabel2.Click += new System.EventHandler(this.toolStripStatusLabel2_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -112,7 +112,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.ShowIcon = true;
             this.Text = "TanjiLua";
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
