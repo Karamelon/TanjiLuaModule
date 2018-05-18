@@ -110,11 +110,11 @@ The key of this module is simplicity of create own scripts. **Lua** is very simp
 ## Script Example
 > ```lua 
 > --Create a simple GUI
-> Gui:Create("Say user ID module", 200, 75)
+> Gui:create("Say user ID module", 200, 75)
 > -- Create a Checkbox
-> Gui:AddCheckBox("ckbox", "Say?" , 60, 8)
+> Gui:addCheckBox("ckbox", "Say?" , 60, 8)
 > -- Show gui
-> Gui:Show()
+> Gui:show()
 > 
 > -- Bind Server Message
 > Server:register(2220)
