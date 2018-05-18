@@ -120,7 +120,7 @@ The key of this module is simplicity of create own scripts. **Lua** is very simp
 > Server:register(2220)
 > 
 > -- On server message recived
-> function ServerMessageHandler(hader, event)
+> function ServerMessageHandler(header, event)
 >      -- Check header and verify if chackbox is checked
 >      if (header == 2220 and Gui:isCheked("ckbox")) then
 >            -- Intercept data, and  store value in local variable
