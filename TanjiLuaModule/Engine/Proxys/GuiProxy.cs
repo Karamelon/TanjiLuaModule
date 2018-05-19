@@ -8,51 +8,51 @@ using TanjiLuaModule.Engine.Types;
 
 namespace TanjiLuaModule.Engine.Proxys
 {
-    class GuiProxy
+    internal class GuiProxy
     {
-        GuiType type;
+        private readonly GuiType _type;
 
         [MoonSharpHidden]
         public GuiProxy(GuiType type)
         {
-            this.type = type;
+            this._type = type;
         }
 
         public DynValue GetValue(DynValue name)
         {
-            return DynValue.NewString(type.GetValue(name.String));
+            return DynValue.NewString(_type.GetValue(name.String));
         }
         public void SetValue(DynValue name, DynValue value)
         {
-            type.SetValue(name.String, value.String);
+            _type.SetValue(name.String, value.String);
         }
         public DynValue IsCheked(DynValue name)
         {
-            return DynValue.NewBoolean(type.IsChecked(name.String));
+            return DynValue.NewBoolean(_type.IsChecked(name.String));
         }
         public void TopMost(DynValue actived)
         {
-            type.TopMost(actived.Boolean);
+            _type.TopMost(actived.Boolean);
         }
         public void Create(DynValue name, DynValue x, DynValue y)
         {
-            type.Create(name.String, (int)x.Number, (int)y.Number);
+            _type.Create(name.String, (int)x.Number, (int)y.Number);
         }
         public void AddButton(DynValue id, DynValue text, DynValue x, DynValue y)
         {
-            type.AddButton(id.String, text.String, (int)x.Number, (int)y.Number);
+            _type.AddButton(id.String, text.String, (int)x.Number, (int)y.Number);
         }
         public void AddCheckBox(DynValue id, DynValue text, DynValue x, DynValue y)
         {
-            type.AddCheckBox(id.String, text.String, (int)x.Number, (int)y.Number);
+            _type.AddCheckBox(id.String, text.String, (int)x.Number, (int)y.Number);
         }
         public void AddLabel(DynValue id, DynValue text, DynValue x, DynValue y)
         {
-            type.AddLabel(id.String, text.String, (int)x.Number, (int)y.Number);
+            _type.AddLabel(id.String, text.String, (int)x.Number, (int)y.Number);
         }
         public void Show(DynValue value)
         {
-            type.Show();
+            _type.Show();
         }
     }
 }

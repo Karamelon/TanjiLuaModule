@@ -2,71 +2,70 @@
 using Sulakore.Communication;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using TanjiLuaModule.Engine.Proxys;
 
 namespace TanjiLuaModule.Engine.Types
 {
-    class OutgoingType
+    internal class OutgoingType
     {
-        private ScriptProcess scriptProcess;
-        private MainForm mainForm;
+        private readonly ScriptProcess _scriptProcess;
+        private readonly MainForm _mainForm;
 
         public OutgoingType(MainForm mainForm, ScriptProcess script)
         {
-            this.mainForm = mainForm;
-            this.scriptProcess = script;
+            this._mainForm = mainForm;
+            this._scriptProcess = script;
         }
 
         public void Send(ushort header, List<DynValue> vlas)
         {
-            object[] values = new object[vlas.Count];
-            int pos = 0;
-            foreach (DynValue val in vlas)
+            var values = new object[vlas.Count];
+            var pos = 0;
+            foreach (var val in vlas)
             {
-                if (val.Type == DataType.Number)
+                switch (val.Type)
                 {
-                    values[pos] = val.Number;
+                    case DataType.Number:
+                        values[pos] = val.Number;
+                        break;
+                    case DataType.String:
+                        values[pos] = val.String;
+                        break;
+                    case DataType.Boolean:
+                        values[pos] = val.Boolean;
+                        break;
                 }
-                if (val.Type == DataType.String)
-                {
-                    values[pos] = val.String;
-                }
-                if (val.Type == DataType.Boolean)
-                {
-                    values[pos] = val.Boolean;
-                }
+
                 pos++;
             }
-            mainForm.Connection.SendToServerAsync(header, values);
+            _mainForm.Connection.SendToServerAsync(header, values);
         }
 
         public void Register(int packet)
         {
-            Script lua = scriptProcess.Script;
-            scriptProcess.RegistredPacketHandlers.Add(packet, RegisterType.OUT);
-            mainForm.Triggers.OutAttach((ushort)packet, (dt)=>
+            var lua = _scriptProcess.Script;
+            _scriptProcess.RegistredPacketHandlers.Add(packet, RegisterType.Out);
+            _mainForm.Triggers.OutAttach((ushort)packet, (dt)=>
             {
                 ServerMessageRecivedFire(packet, dt);
             }
             );
 
         }
-        public void ServerMessageRecivedFire(int header, DataInterceptedEventArgs dt)
+
+        private void ServerMessageRecivedFire(int header, DataInterceptedEventArgs dt)
         {
             try
             {
-                scriptProcess.RegistredHandlers.Add(scriptProcess.Last, dt);
-                scriptProcess.Script.CallAsync(scriptProcess.Script.Globals["ServerMessageHandler"],
+                _scriptProcess.RegistredHandlers.Add(_scriptProcess.Last, dt);
+                _scriptProcess.Script.CallAsync(_scriptProcess.Script.Globals["ServerMessageHandler"],
                     DynValue.NewNumber(header),
-                    DynValue.NewNumber(scriptProcess.Last));
-                scriptProcess.Last++;
+                    DynValue.NewNumber(_scriptProcess.Last));
+                _scriptProcess.Last++;
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 }

@@ -9,26 +9,26 @@ using TanjiLuaModule.Engine.Types;
 
 namespace TanjiLuaModule.Engine.Proxys
 {
-    class OutgoingProxy
+    internal class OutgoingProxy
     {
-        OutgoingType type;
+        private readonly OutgoingType _type;
 
         [MoonSharpHidden]
         public OutgoingProxy(OutgoingType type)
         {
-            this.type = type;
+            this._type = type;
         }
 
         public void Send(DynValue header, List<DynValue>send)
         {
-            type.Send((ushort)header.Number, send);
+            _type.Send((ushort)header.Number, send);
         }
 
         public void Register(DynValue value)
         {
             if (value.Type == DataType.Number)
             {
-                type.Register((int)value.Number);
+                _type.Register((int)value.Number);
             }
         }
     }

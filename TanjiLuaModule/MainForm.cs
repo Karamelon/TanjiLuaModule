@@ -21,11 +21,11 @@ namespace TanjiLuaModule
     [Author("Karamelon")]
     public partial class MainForm : ExtensionForm
     {
-        private ScriptManager scriptManager;
+        private readonly ScriptManager _scriptManager;
 
         public MainForm()
         {
-            scriptManager = new ScriptManager(this);
+            _scriptManager = new ScriptManager(this);
             InitializeComponent();
             
         }
@@ -42,13 +42,16 @@ namespace TanjiLuaModule
             {
                 return;
             }
-            var dialog = sender as OpenFileDialog;           
-            scriptManager.Load(dialog.FileName);
+            if (sender is OpenFileDialog dialog) 
+                _scriptManager.Load(new ScriptProcess(this, dialog.FileName, _scriptManager));
         }
 
-        public void AddLog(String console)
+        public void AddLog(string console)
         {
-            listBox1.Invoke((MethodInvoker)(() => listBox1.Items.Add(console)));
+            listBox1.Invoke((MethodInvoker)(() => {
+                var visibleItems = listBox1.ClientSize.Height / listBox1.ItemHeight;
+                listBox1.TopIndex = Math.Max(listBox1.Items.Count - visibleItems + 1, 0);
+                listBox1.Items.Add(console); }));
         }
 
 

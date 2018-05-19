@@ -7,36 +7,36 @@ using System.Threading.Tasks;
 
 namespace TanjiLuaModule.Engine.Proxys
 {
-    class DataInterceptedProxy
+    internal class DataInterceptedProxy
     {
-        DataInterceptedType type;
+        private readonly DataInterceptedType _type;
 
         [MoonSharpHidden]
         public DataInterceptedProxy(DataInterceptedType type)
         {
-            this.type = type;
+            this._type = type;
         }
 
-        public String STRING()
+        public string String()
         {
-            return "str";
+            return _type.String();
         }
-        public String INT()
+        public string Int()
         {
-            return "int";
+            return _type.Int();
         }
-        public String BOOL()
+        public string Bool()
         {
-            return "bool";
+            return _type.Bool();
         }
-        public String SHORT()
+        public string Short()
         {
-            return "short";
+            return _type.Short();
         }
 
-        public List<DynValue> data(DynValue id, List<DynValue> dataTypes)
+        public List<DynValue> Data(DynValue id, IEnumerable<DynValue> dataTypes)
         {
-            return type.GetInterceptedData(id, dataTypes);
+            return _type.GetInterceptedData(id, dataTypes);
         }
  
     }

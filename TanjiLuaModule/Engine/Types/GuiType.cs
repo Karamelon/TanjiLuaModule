@@ -10,27 +10,24 @@ using System.Windows.Forms;
 
 namespace TanjiLuaModule.Engine.Types
 {
-    class GuiType
+    internal class GuiType
     {
         private Form Form;
-        private ScriptProcess scriptProcess;
-        private MainForm mainForm;
+        private readonly ScriptProcess _scriptProcess;
 
         public GuiType(MainForm mainForm, ScriptProcess scriptp)
         {
-            this.mainForm = mainForm;
-            scriptProcess = scriptp;
-            Form = new Form();
-            Form.Disposed += new EventHandler(delegate
-            {
-                scriptProcess.ScriptManager.Remove(scriptProcess);
-            });
-            
+            _scriptProcess = scriptp;      
         }
 
         public void Create(string title, int width, int height)
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
+            Form = new Form();
+            Form.Disposed += new EventHandler(delegate
+            {
+                _scriptProcess.Dispose();
+            });
+            var resources = new ComponentResourceManager(typeof(MainForm));
             Form.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Form.Width = width;
             Form.Text = title;
@@ -45,8 +42,8 @@ namespace TanjiLuaModule.Engine.Types
 
         public void AddButton(string id, string text, int x, int y)
         {
-            Script script = scriptProcess.Script;
-            Button button = new Button
+            var script = _scriptProcess.Script;
+            var button = new Button
             {
                 Name = id,
                 Text = text,
@@ -57,7 +54,10 @@ namespace TanjiLuaModule.Engine.Types
                 {
                     script.Call(script.Globals["button_"+id+"_click"]);
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    // ignored
+                }
             });
             Form.Controls.Add(button);
         }
@@ -65,8 +65,8 @@ namespace TanjiLuaModule.Engine.Types
 
         public void AddLabel(string id, string text, int x, int y)
         {
-            Script script = scriptProcess.Script;
-            Label label = new Label
+            var script = _scriptProcess.Script;
+            var label = new Label
             {
                 Name = id,
                 Text = text,
@@ -77,8 +77,8 @@ namespace TanjiLuaModule.Engine.Types
 
         public void AddCheckBox(string id, string text, int x, int y)
         {
-            Script script = scriptProcess.Script;
-            CheckBox checkbox = new CheckBox
+            var script = _scriptProcess.Script;
+            var checkbox = new CheckBox
             {
                 Name = id,
                 Text = text,
@@ -96,8 +96,8 @@ namespace TanjiLuaModule.Engine.Types
 
         public void AddTextbox(string id, int x, int y)
         {
-            Script script = scriptProcess.Script;
-            TextBox textbox = new TextBox()
+            var script = _scriptProcess.Script;
+            var textbox = new TextBox()
             {
                 Name = id,
                 Location = new Point(x, y)
@@ -105,43 +105,41 @@ namespace TanjiLuaModule.Engine.Types
             Form.Controls.Add(textbox);
         }
 
-        public String GetValue(String name)
+        public string GetValue(string name)
         {
             if (!Form.Controls.ContainsKey(name))
             {
                 return null;
             }
-            Control[] ctns = Form.Controls.Find(name, true);
+            var ctns = Form.Controls.Find(name, true);
             var ctn = ctns.GetValue(0) as Control;
-            return ctn.Text;
+            return ctn?.Text;
         }
 
-        public void SetValue(String name, String value)
+        public void SetValue(string name, string value)
         {
             if (!Form.Controls.ContainsKey(name))
             {
                 return;
             }
-            Control[] ctns = Form.Controls.Find(name, true);
+            var ctns = Form.Controls.Find(name, true);
             var ctn = ctns.GetValue(0) as Control;
-            ctn.Text = value;
+            if (ctn != null) ctn.Text = value;
         }
 
-        public bool IsChecked(String ckbox)
+        public bool IsChecked(string ckbox)
         {
             if (!Form.Controls.ContainsKey(ckbox))
             {
                 return false;
             }
-            Control[] ctns = Form.Controls.Find(ckbox, true);
+            var ctns = Form.Controls.Find(ckbox, true);
             var ctn = ctns.GetValue(0) as Control;
-            if (ctn is CheckBox)
-            {
-                var ckb = ctn as CheckBox;
-                return ckb.Checked;
-
-            }
-            return false;
+            
+            if (!(ctn is CheckBox)) return false;
+            
+            var ckb = ctn as CheckBox;
+            return ckb.Checked;
         }
 
         public void Show()

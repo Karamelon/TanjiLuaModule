@@ -9,40 +9,30 @@ using System.Threading.Tasks;
 
 namespace TanjiLuaModule.Engine
 {
-    enum RegisterType
+    internal enum RegisterType
     {
-        IN,
-        OUT
+        In,
+        Out
     }
-    class ScriptManager
+
+    internal class ScriptManager
     {
-
-        public Dictionary<String, ScriptProcess> process = new Dictionary<string, ScriptProcess>();
-
-        public MainForm MainForm { get; }
+        private readonly List<ScriptProcess> _process = new List<ScriptProcess>();
 
 
         public ScriptManager(MainForm main)
         {
-            MainForm = main;
         }
 
-        public void Load(string dir)
-        {
-            if (process.ContainsKey(dir))
-            {
-                process.TryGetValue(dir,out ScriptProcess sp);
-                sp.Dispose();
-                process.Remove(dir);
-            }
-            ScriptProcess scriptProcess = new ScriptProcess(MainForm, dir, this);
-            scriptProcess.Load();
-            process.Add(dir,scriptProcess);
+        public void Load(ScriptProcess sp)
+        { 
+            sp.Load();
+            _process.Add(sp);
         }
 
         public void Remove(ScriptProcess script)
         {
-            process.Remove(script.ScriptFile);
+            _process.Remove(script);
             script.Dispose();
         }
 

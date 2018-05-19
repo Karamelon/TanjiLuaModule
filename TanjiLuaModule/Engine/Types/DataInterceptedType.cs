@@ -11,57 +11,55 @@ namespace TanjiLuaModule.Engine.Proxys
 {
     class DataInterceptedType
     {
-        ScriptProcess script;
-        MainForm mainForm;
+        private readonly ScriptProcess _script;
 
         [MoonSharpHidden]
         public DataInterceptedType(MainForm mainForm, ScriptProcess script)
         {
-            this.script = script;
-            this.mainForm = mainForm;
+            this._script = script;
         }
 
-        public String STRING()
+        public string String()
         {
             return "str";
         }
-        public String INT()
+        public string Int()
         {
             return "int";
         }
-        public String BOOL()
+        public string Bool()
         {
             return "bool";
         }
-        public String SHORT()
+        public string Short()
         {
             return "short";
         }
 
-        public List<DynValue> GetInterceptedData(DynValue id, List<DynValue> dataTypes)
+        public List<DynValue> GetInterceptedData(DynValue id, IEnumerable<DynValue> dataTypes)
         {
-            List<DynValue> table = new List<DynValue>();
-            if (!script.RegistredHandlers.ContainsKey((long)id.Number))
+            var table = new List<DynValue>();
+            if (!_script.RegistredHandlers.ContainsKey((long)id.Number))
             {
                 return table;
             }
-            script.RegistredHandlers.TryGetValue((long)id.Number, out DataInterceptedEventArgs type);
-            script.RegistredHandlers.Remove((long)id.Number);
-            foreach (DynValue value in dataTypes)
+            _script.RegistredHandlers.TryGetValue((long)id.Number, out var type);
+            _script.RegistredHandlers.Remove((long)id.Number);
+            foreach (var value in dataTypes)
             {
                 switch (value.String.ToLower())
                 {
                     case "int":
-                        table.Add(DynValue.NewNumber(type.Packet.ReadInteger()));
+                        if (type != null) table.Add(DynValue.NewNumber(type.Packet.ReadInteger()));
                         break;
                     case "str":
-                        table.Add(DynValue.NewString(type.Packet.ReadString()));
+                        if (type != null) table.Add(DynValue.NewString(type.Packet.ReadString()));
                         break;
                     case "bool" :
-                        table.Add(DynValue.NewBoolean(type.Packet.ReadBoolean()));
+                        table.Add(DynValue.NewBoolean(type != null && type.Packet.ReadBoolean()));
                         break;
                     case "short":
-                        table.Add(DynValue.NewNumber(type.Packet.ReadShort()));
+                        if (type != null) table.Add(DynValue.NewNumber(type.Packet.ReadShort()));
                         break;
                     default:
                         continue;

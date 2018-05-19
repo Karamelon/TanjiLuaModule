@@ -64,7 +64,7 @@
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(98, 17);
-            this.toolStripStatusLabel1.Text = "TanjiLua (v: 1.0.2)";
+            this.toolStripStatusLabel1.Text = "TanjiLua (v: 1.0.3)";
             // 
             // toolStripStatusLabel2
             // 
